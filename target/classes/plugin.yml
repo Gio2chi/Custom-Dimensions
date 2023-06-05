@@ -1,0 +1,14 @@
+name: pvparena
+main: it.angaronigiovanni.pvparena.Plugin
+version: 0.0.1
+api-version: 1.15
+author: Gio_A
+description: This plugin will provide a new dimension in the server, which is the PVPArena
+commands: 
+  PVPArena:
+    usage: /PVPArena
+    description: Sends you to the PVPArena dimension
+  
+  disable:
+    usage: /disable plugin
+    description: disable the PVPArena plugin by default or a choosen one
