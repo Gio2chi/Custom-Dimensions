@@ -30,6 +30,6 @@ public class MinigameType {
     public static final int parseType(String type) {
         for( int i=0; i!=MinigameType.types.length; i++ ) 
             if (MinigameType.types[i].equalsIgnoreCase(type)) return i; 
-        return MinigameType.types.length - 1;
+        return -1;
     }
 }

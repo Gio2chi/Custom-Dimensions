@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
 public class Dimension {
-    private String name;
-    private World dim;
-    private WorldCreator worldCreator;
+    protected String name;
+    protected World dim;
+    protected WorldCreator worldCreator;
 
     public Dimension ( String dimName) throws IOException {
 
@@ -51,5 +52,8 @@ public class Dimension {
     public World getWorld () {
         if( this.dim != null ) return this.dim;
         throw new Error("World not loaded", null);
+    }
+    public void unload () {
+        Bukkit.unloadWorld(this.dim, true);
     }
 }

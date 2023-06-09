@@ -1,0 +1,11 @@
+# The structure of this file is:
+# minigames:
+#   [Name of the minigame]:
+#     type: PVP | BUILD_BATTLE | PARKOUR | SKYWARS | ESCAPE | CTM | PVE | HIDE_AND_SEEK | DROPPER | RPG | FIND_THE_BUTTON | ELYTA | MISC | SURVIVAL
+#     difficulty: PEACEFUL | EASY | NORMAL | HARD 
+#     hardcore: true
+#     pvp: true
+#     autosave: true
+#     [gamerules]: 
+#       whatever: true
+#       whatever: number

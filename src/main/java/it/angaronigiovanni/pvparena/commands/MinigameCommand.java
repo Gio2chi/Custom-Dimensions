@@ -17,57 +17,71 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import it.angaronigiovanni.pvparena.Plugin;
 import it.angaronigiovanni.pvparena.dimensions.Minigame;
 import it.angaronigiovanni.pvparena.dimensions.MinigameType;
 
-public class MinigameCommand implements TabExecutor{
-	
+public class MinigameCommand implements TabExecutor {
+
 	Server server = Bukkit.getServer();
 	World overworld = server.getWorlds().get(0);
 	Logger logger = Bukkit.getLogger();
 
 	/*
-	 	/minigame 
-	 	 * teleport the sender to a random arena
-	 	
-	 	/minigame dimension
-	 	 * teleport the sender to a specific arena (other dimensions too but without the Tab Completition)
-	 	 
-	 	/minigame player 
-	 	 * teleport "player" to a random arena (also multiple players)
-	 	
-	 	/minigame player dimension
-	 	 * teleport "player" to a specific arena (other dimensions too but without the Tab Completition) (also multiple players)
-	 	  
-	 	if the sender/player is in an Arena the dimension will be the overworld
-	*/
-	
-	
+	 * /minigame
+	 * teleport the sender to a random arena
+	 * 
+	 * /minigame dimension
+	 * teleport the sender to a specific arena (other dimensions too but without the
+	 * Tab Completition)
+	 * 
+	 * /minigame player
+	 * teleport "player" to a random arena (also multiple players)
+	 * 
+	 * /minigame player dimension
+	 * teleport "player" to a specific arena (other dimensions too but without the
+	 * Tab Completition) (also multiple players)
+	 * 
+	 * if the sender/player is in an Arena the dimension will be the overworld
+	 */
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-		// loading new minigame maps without restarting the server
-		if( args[0].equalsIgnoreCase("load") ) {
+		// load new minigame maps without restarting the server
+		if (args.length != 0 && args[0].equalsIgnoreCase("load")) {
 
-			if( !sender.isOp() ){ 
-				sender.sendMessage("&4An administrator permission is required"); 
+			if (!sender.isOp()) {
+				sender.sendMessage("&4An administrator permission is required");
 				return false;
 			}
-			if( args.length > 3 ) {
-				sender.sendMessage("Syntax error: try with /minigame load [dimension_name] or /minigame load [dimension_name] [minigame_type] \n default minigame type is survival");
+			if (args.length > 3 || args.length < 2) {
+				sender.sendMessage(
+						"Syntax error: try with /minigame load [dimension_name] or /minigame load [dimension_name] [minigame_type] \nDefault minigame type is SURVIVAL");
 				return false;
 			}
 
-			if( !Files.exists(new File(Minigame.folder.toPath() + "/" + args[1]).toPath()) ) {
+			if (!Files.exists(new File(Minigame.folder.toPath() + "/" + args[1]).toPath())) {
 				sender.sendMessage(args[1] + " doesnt exist");
 				return false;
 			}
 
 			try {
-				int type = MinigameType.SURVIVAL;
-				if( args[2] != null ) type = MinigameType.parseType(args[2]);
+				int configType = MinigameType
+						.parseType((String) Plugin.plugin.getConfig().get("minigames." + args[1] + ".type"));
+
+				int type = configType != -1 ? configType : MinigameType.SURVIVAL;
+				if (args.length == 3)
+					type = MinigameType.parseType(args[2]);
+				if (type == -1) {
+					sender.sendMessage(args[2] + " isnt an available mode");
+					return false;
+				}
 				Minigame minigame = new Minigame(args[1], type);
 				minigame.load();
+
+				sender.sendMessage("&a" + args[1] + " is loaded successfully");
+
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -76,119 +90,159 @@ public class MinigameCommand implements TabExecutor{
 			}
 		}
 
-		if(sender instanceof Player && sender.isOp()) {
-			Player player = (Player) sender;
-			Boolean solo = true;
-			World dim = randomDimension();
-			
-			if(args.length == 1) {
-				
-				if(server.getWorld(args[0]) != null) {
-					dim = server.getWorld(args[0]);
-				}else if(server.getPlayer(args[0]) != null){
-					player = server.getPlayer(args[0]);
-				}else if(args[0].equals("@a")) {
-					solo = false;
-				}else {
-					player.sendMessage("The player is not Online or the dimension doesn't exist");
-					return false;
-				}
-				
-			}else if(args.length == 2) {
-				
-				if(server.getPlayer(args[0]) != null) {
-					player = server.getPlayer(args[0]);
-				}else if(args[0].equals("@a")) {
-					solo = false;
-				}else {
-					player.sendMessage("The player is not Online");
-					return false;
-				}
-				
-				if(server.getWorld(args[1]) != null) {
-					dim = server.getWorld(args[1]);
-				}else {
-					player.sendMessage("The World doesn't exist");
-					return false;
-				}
-				
-			}else if(args.length != 0) {
-				player.sendMessage("sbagliata sintassi del comando /PVPArena");
+		// unload minigame map without restarting the server
+		if (args.length != 0 && args[0].equalsIgnoreCase("unload")) {
+
+			if (!sender.isOp()) {
+				sender.sendMessage("&4An administrator permission is required");
 				return false;
 			}
-			
-			if(solo) {
-				if(player.getWorld() == dim) {
-					player.setGameMode(GameMode.SURVIVAL);
-					player.teleport(new Location(overworld, -208, 70, 80));
-				} else {
-					player.setGameMode(GameMode.ADVENTURE);
-					player.teleport(new Location(dim, 268, 27, 10));
-				}
-			} else {
-				Player[] OnlinePlayers = new Player[server.getOnlinePlayers().size()];
-				server.getOnlinePlayers().toArray(OnlinePlayers);
-
-				for(int i = 0; i != OnlinePlayers.length; i++) {
-					OnlinePlayers[i].teleport(new Location(dim, 268, 27, 10));
-				}
+			if (args.length != 2) {
+				sender.sendMessage("Syntax error: try with /minigame unload [dimension_name]");
+				return false;
 			}
-			
-			
+
+			if (Bukkit.getWorld("minigames/" + args[1]) == null) {
+				sender.sendMessage(args[1] + " doesnt exist");
+				return false;
+			}
+
+			try {
+				Minigame minigame = Minigame.get(args[1]);
+
+				if (minigame == null) {
+					sender.sendMessage(args[1] + " isnt a minigame");
+					return false;
+				}
+
+				minigame.unload();
+				sender.sendMessage("&a" + args[1] + " is unloaded successfully");
+				return true;
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				sender.sendMessage("IOException encountered");
+				return false;
+			}
 		}
+
+		/*
+		 * if(sender instanceof Player && sender.isOp()) {
+		 * Player player = (Player) sender;
+		 * Boolean solo = true;
+		 * World dim = randomDimension();
+		 * 
+		 * if(args.length == 1) {
+		 * 
+		 * if(server.getWorld(args[0]) != null) {
+		 * dim = server.getWorld(args[0]);
+		 * }else if(server.getPlayer(args[0]) != null){
+		 * player = server.getPlayer(args[0]);
+		 * }else if(args[0].equals("@a")) {
+		 * solo = false;
+		 * }else {
+		 * player.sendMessage("The player is not Online or the dimension doesn't exist"
+		 * );
+		 * return false;
+		 * }
+		 * 
+		 * }else if(args.length == 2) {
+		 * 
+		 * if(server.getPlayer(args[0]) != null) {
+		 * player = server.getPlayer(args[0]);
+		 * }else if(args[0].equals("@a")) {
+		 * solo = false;
+		 * }else {
+		 * player.sendMessage("The player is not Online");
+		 * return false;
+		 * }
+		 * 
+		 * if(server.getWorld(args[1]) != null) {
+		 * dim = server.getWorld(args[1]);
+		 * }else {
+		 * player.sendMessage("The World doesn't exist");
+		 * return false;
+		 * }
+		 * 
+		 * }else if(args.length != 0) {
+		 * player.sendMessage("sbagliata sintassi del comando /PVPArena");
+		 * return false;
+		 * }
+		 * 
+		 * if(solo) {
+		 * if(player.getWorld() == dim) {
+		 * player.setGameMode(GameMode.SURVIVAL);
+		 * player.teleport(new Location(overworld, -208, 70, 80));
+		 * } else {
+		 * player.setGameMode(GameMode.ADVENTURE);
+		 * player.teleport(new Location(dim, 268, 27, 10));
+		 * }
+		 * } else {
+		 * Player[] OnlinePlayers = new Player[server.getOnlinePlayers().size()];
+		 * server.getOnlinePlayers().toArray(OnlinePlayers);
+		 * 
+		 * for(int i = 0; i != OnlinePlayers.length; i++) {
+		 * OnlinePlayers[i].teleport(new Location(dim, 268, 27, 10));
+		 * }
+		 * }
+		 * 
+		 * 
+		 * }
+		 */
 		return true;
 	}
-	
+
 	private World randomDimension() {
 		int rand = (int) (Math.random() * (server.getWorlds().size() - 3)) + 3;
 		return server.getWorlds().get(rand);
 	}
-	
+
 	/*
-		/PVPArena tabCompleter[0] tabCompleter[1] 
- 	 	 * tabComplete[0] will display all dimensions and all players (with @a)
- 	 	 * tabComplete[1] will display all dimensions only if the first argument is an Online player
- 	*/
+	 * /PVPArena tabCompleter[0] tabCompleter[1]
+	 * tabComplete[0] will display all dimensions and all players (with @a)
+	 * tabComplete[1] will display all dimensions only if the first argument is an
+	 * Online player
+	 */
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-	
-		//tabCompleter[0]
-		if(args.length == 1) {
+
+		// tabCompleter[0]
+		if (args.length == 1) {
 			List<String> result = new ArrayList<>();
-		
+
 			World[] dimensions = new World[server.getWorlds().size()];
 			server.getWorlds().toArray(dimensions);
-		
+
 			for (int i = 0; i != dimensions.length; i++) {
 				result.add(dimensions[i].getName());
 			}
-		
+
 			Player[] players = new Player[server.getOnlinePlayers().size()];
 			server.getOnlinePlayers().toArray(players);
-		
-			for(int i = 0; i != players.length; i++) {
+
+			for (int i = 0; i != players.length; i++) {
 				result.add(players[i].getName());
 			}
-		
+
 			result.add("@a");
-		
+
 			return result;
 		}
-		
-		if(args.length == 2 && server.getPlayer(args[1]) != null) {
+
+		if (args.length == 2 && server.getPlayer(args[1]) != null) {
 			List<String> result = new ArrayList<>();
-			
+
 			World[] dimensions = new World[server.getWorlds().size()];
 			server.getWorlds().toArray(dimensions);
-		
+
 			for (int i = 0; i != dimensions.length; i++) {
 				result.add(dimensions[i].getName());
 			}
-			
+
 			return result;
 		}
-	
+
 		return null;
 	}
 }
