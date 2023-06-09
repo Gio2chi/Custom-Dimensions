@@ -1,7 +1,11 @@
 package it.angaronigiovanni.pvparena.commands;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -13,22 +17,26 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-public class TeleportToArena implements TabExecutor{
+import it.angaronigiovanni.pvparena.dimensions.Minigame;
+import it.angaronigiovanni.pvparena.dimensions.MinigameType;
+
+public class MinigameCommand implements TabExecutor{
 	
 	Server server = Bukkit.getServer();
 	World overworld = server.getWorlds().get(0);
+	Logger logger = Bukkit.getLogger();
 
 	/*
-	 	/PVPArena 
+	 	/minigame 
 	 	 * teleport the sender to a random arena
 	 	
-	 	/PVPArena dimension
+	 	/minigame dimension
 	 	 * teleport the sender to a specific arena (other dimensions too but without the Tab Completition)
 	 	 
-	 	/PVPArena player 
+	 	/minigame player 
 	 	 * teleport "player" to a random arena (also multiple players)
 	 	
-	 	/PVPArena player dimension
+	 	/minigame player dimension
 	 	 * teleport "player" to a specific arena (other dimensions too but without the Tab Completition) (also multiple players)
 	 	  
 	 	if the sender/player is in an Arena the dimension will be the overworld
@@ -37,6 +45,37 @@ public class TeleportToArena implements TabExecutor{
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
+		// loading new minigame maps without restarting the server
+		if( args[0].equalsIgnoreCase("load") ) {
+
+			if( !sender.isOp() ){ 
+				sender.sendMessage("&4An administrator permission is required"); 
+				return false;
+			}
+			if( args.length > 3 ) {
+				sender.sendMessage("Syntax error: try with /minigame load [dimension_name] or /minigame load [dimension_name] [minigame_type] \n default minigame type is survival");
+				return false;
+			}
+
+			if( !Files.exists(new File(Minigame.folder.toPath() + "/" + args[1]).toPath()) ) {
+				sender.sendMessage(args[1] + " doesnt exist");
+				return false;
+			}
+
+			try {
+				int type = MinigameType.SURVIVAL;
+				if( args[2] != null ) type = MinigameType.parseType(args[2]);
+				Minigame minigame = new Minigame(args[1], type);
+				minigame.load();
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+				sender.sendMessage("IOException encountered");
+				return false;
+			}
+		}
+
 		if(sender instanceof Player && sender.isOp()) {
 			Player player = (Player) sender;
 			Boolean solo = true;
@@ -107,8 +146,8 @@ public class TeleportToArena implements TabExecutor{
 	
 	/*
 		/PVPArena tabCompleter[0] tabCompleter[1] 
- 	 	 * tabCompleter[0] will display all dimensions and all players (with @a)
- 	 	 * tabCompleter[1] will display all dimensions only if the first argument is an Online player
+ 	 	 * tabComplete[0] will display all dimensions and all players (with @a)
+ 	 	 * tabComplete[1] will display all dimensions only if the first argument is an Online player
  	*/
 
 	@Override

@@ -14,4 +14,22 @@ public class MinigameType {
     public static final int FIND_THE_BUTTON = 10;
     public static final int ELYTRA = 11;
     public static final int MISC = 12;
+    public static final int SURVIVAL = 13;
+    public static String[] types = { "PVP", "BUILD_BATTLE", "PARKOUR", "SKYWARS", "ESCAPE", "CTM", "PVE", "HIDE_AND_SEEK", "DROPPER", "RPG", "FIND_THE_BUTTON", "ELYTA", "MISC", "SURVIVAL"};
+
+    private int type;
+    MinigameType(int type) {
+        if(!(type < MinigameType.types.length && type > 0)) throw new Error("Minigame type not available", null);
+        this.type = type;
+    }
+
+    int getType() {
+        return this.type;
+    }
+
+    public static final int parseType(String type) {
+        for( int i=0; i!=MinigameType.types.length; i++ ) 
+            if (MinigameType.types[i].equalsIgnoreCase(type)) return i; 
+        return MinigameType.types.length - 1;
+    }
 }

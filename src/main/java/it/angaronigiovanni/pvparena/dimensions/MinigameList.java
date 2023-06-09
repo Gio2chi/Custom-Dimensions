@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class MinigameList extends ArrayList<Minigame>{
     
-    public List<Minigame> subList(MinigameType type) {
+    public List<Minigame> subList(int type) {
         List<Minigame> specificList =  new ArrayList<Minigame>();
 
         for (Minigame minigame : this) {
@@ -21,7 +21,7 @@ public class MinigameList extends ArrayList<Minigame>{
 
         return this.get(rand.nextInt(this.size()));
     }
-    public Minigame rand (MinigameType type) {
+    public Minigame rand ( int type) {
         List<Minigame> tmp = this.subList(type);
         
         Random rand = new Random();

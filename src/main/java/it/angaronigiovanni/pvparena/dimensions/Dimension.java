@@ -12,31 +12,44 @@ public class Dimension {
     private String name;
     private World dim;
     private WorldCreator worldCreator;
-    private Path folder;
-    private boolean isLoaded = false;
 
+    public Dimension ( String dimName) throws IOException {
 
-    public Dimension (String dimName, Path dimsPath) throws IOException {
         this.name = dimName;
-        this.folder = dimsPath;
 
-        if(!Files.exists(this.folder)) Files.createDirectories(this.folder);
-        if(!Files.exists(new File(this.folder.toString() + this.name).toPath())) throw new Error(this.name + " doesnt exist", null);
+        if(!Files.exists(new File( this.name ).toPath())) 
+            throw new Error(this.name + " doesnt exist", null);
 
         this.worldCreator = this.create();
     }
+    public Dimension ( String dimName,  Path dimsPath) throws IOException {
+        this.name = dimName;
+
+        if(!Files.exists(dimsPath)) 
+            Files.createDirectories(dimsPath);
+        
+        File world = new File( dimsPath.toString() + "/" + this.name );
+
+        if(!Files.exists(world.toPath())) 
+            throw new Error(this.name + " doesnt exist", null);
+        
+        this.worldCreator = this.create(dimsPath);
+    }
 
     private WorldCreator create () {
-        File worldFolder = new File(this.folder.toFile() + "/" + this.name); // Modify as per your world folder path
-        return new WorldCreator(worldFolder.getName());
+        return new WorldCreator(this.name);
+    }
+    private WorldCreator create (Path folder) {
+        return new WorldCreator( folder.toString() + "/" + this.name);
     }
     
     public void load () {
-        this.isLoaded = true;
-        this.dim = this.worldCreator.createWorld(); // Load the world
+        if (this.dim == null) {
+            this.dim = this.worldCreator.createWorld(); // Load the world
+        }
     }
     public World getWorld () {
-        if(this.isLoaded) return this.dim;
+        if( this.dim != null ) return this.dim;
         throw new Error("World not loaded", null);
     }
 }
