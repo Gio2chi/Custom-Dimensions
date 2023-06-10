@@ -47,15 +47,26 @@ public class Minigame extends Dimension {
             FileConfiguration configFile = Plugin.plugin.getConfig();
             configFile.set("minigames." + this.name + ".type", MinigameType.types[this.type]);
 
-            // MemorySection config = (MemorySection) configFile.get("minigames." +
-            // this.name);
-
-            ConfigurationSection gamerules = configFile.getConfigurationSection("minigames.PVPArena.gamerules");
+            ConfigurationSection gamerules = configFile.getConfigurationSection("minigames." + this.name + ".gamerules");
 
             if (gamerules != null) {
                 for (String key : gamerules.getKeys(false)) {
                     this.setGameRule(key, gamerules.get(key));
                 }
+            }
+
+            Boolean hardcore = (Boolean) configFile.get("minigames." + this.name + ".hardocore");
+            Boolean pvp = (Boolean) configFile.get("minigames." + this.name + ".pvp");
+            Boolean autosave = (Boolean) configFile.get("minigames." + this.name + ".autosave");
+
+            if (hardcore != null) {
+                this.dim.setHardcore(hardcore);
+            }
+            if (pvp != null) {
+                this.dim.setPVP(pvp);
+            }
+            if (autosave != null) {
+                this.dim.setAutoSave(autosave);
             }
 
             Plugin.plugin.saveConfig();

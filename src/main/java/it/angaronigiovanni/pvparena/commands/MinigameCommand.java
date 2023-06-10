@@ -126,69 +126,66 @@ public class MinigameCommand implements TabExecutor {
 			}
 		}
 
-		/*
-		 * if(sender instanceof Player && sender.isOp()) {
-		 * Player player = (Player) sender;
-		 * Boolean solo = true;
-		 * World dim = randomDimension();
-		 * 
-		 * if(args.length == 1) {
-		 * 
-		 * if(server.getWorld(args[0]) != null) {
-		 * dim = server.getWorld(args[0]);
-		 * }else if(server.getPlayer(args[0]) != null){
-		 * player = server.getPlayer(args[0]);
-		 * }else if(args[0].equals("@a")) {
-		 * solo = false;
-		 * }else {
-		 * player.sendMessage("The player is not Online or the dimension doesn't exist"
-		 * );
-		 * return false;
-		 * }
-		 * 
-		 * }else if(args.length == 2) {
-		 * 
-		 * if(server.getPlayer(args[0]) != null) {
-		 * player = server.getPlayer(args[0]);
-		 * }else if(args[0].equals("@a")) {
-		 * solo = false;
-		 * }else {
-		 * player.sendMessage("The player is not Online");
-		 * return false;
-		 * }
-		 * 
-		 * if(server.getWorld(args[1]) != null) {
-		 * dim = server.getWorld(args[1]);
-		 * }else {
-		 * player.sendMessage("The World doesn't exist");
-		 * return false;
-		 * }
-		 * 
-		 * }else if(args.length != 0) {
-		 * player.sendMessage("sbagliata sintassi del comando /PVPArena");
-		 * return false;
-		 * }
-		 * 
-		 * if(solo) {
-		 * if(player.getWorld() == dim) {
-		 * player.setGameMode(GameMode.SURVIVAL);
-		 * player.teleport(new Location(overworld, -208, 70, 80));
-		 * } else {
-		 * player.setGameMode(GameMode.ADVENTURE);
-		 * player.teleport(new Location(dim, 268, 27, 10));
-		 * }
-		 * } else {
-		 * Player[] OnlinePlayers = new Player[server.getOnlinePlayers().size()];
-		 * server.getOnlinePlayers().toArray(OnlinePlayers);
-		 * 
-		 * for(int i = 0; i != OnlinePlayers.length; i++) {
-		 * OnlinePlayers[i].teleport(new Location(dim, 268, 27, 10));
-		 * }
-		 * }
-		 * 
-		 * 
-		 * }
-		 */
+		if (sender instanceof Player && sender.isOp()) {
+			Player player = (Player) sender;
+			Boolean solo = true;
+			World dim = randomDimension();
+
+			if (args.length == 1) {
+
+				if (server.getWorld(args[0]) != null) {
+					dim = server.getWorld(args[0]);
+				} else if (server.getPlayer(args[0]) != null) {
+					player = server.getPlayer(args[0]);
+				} else if (args[0].equals("@a")) {
+					solo = false;
+				} else {
+					player.sendMessage("The player is not Online or the dimension doesn't exist");
+					return false;
+				}
+
+			} else if (args.length == 2) {
+
+				if (server.getPlayer(args[0]) != null) {
+					player = server.getPlayer(args[0]);
+				} else if (args[0].equals("@a")) {
+					solo = false;
+				} else {
+					player.sendMessage("The player is not Online");
+					return false;
+				}
+
+				if (server.getWorld(args[1]) != null) {
+					dim = server.getWorld(args[1]);
+				} else {
+					player.sendMessage("The World doesn't exist");
+					return false;
+				}
+
+			} else if (args.length != 0) {
+				player.sendMessage("sbagliata sintassi del comando /PVPArena");
+				return false;
+			}
+
+			if (solo) {
+				if (player.getWorld() == dim) {
+					player.setGameMode(GameMode.SURVIVAL);
+					player.teleport(new Location(overworld, -208, 70, 80));
+				} else {
+					player.setGameMode(GameMode.ADVENTURE);
+					player.teleport(new Location(dim, 268, 27, 10));
+				}
+			} else {
+				Player[] OnlinePlayers = new Player[server.getOnlinePlayers().size()];
+				server.getOnlinePlayers().toArray(OnlinePlayers);
+
+				for (int i = 0; i != OnlinePlayers.length; i++) {
+					OnlinePlayers[i].teleport(new Location(dim, 268, 27, 10));
+				}
+			}
+
+		}
+
 		return true;
 	}
 
