@@ -1,24 +1,14 @@
 package it.angaronigiovanni.pvparena.dimensions;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
-import org.bukkit.configuration.ConfigurationOptions;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.checkerframework.checker.units.qual.C;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import it.angaronigiovanni.pvparena.Plugin;
 
@@ -27,6 +17,8 @@ public class Minigame extends Dimension {
 
     public static final File folder = new File("minigames/");
     public int type;
+
+    private Location location;
 
     public Minigame(String name, int type) throws IOException {
         super(name, (new File("minigames/").toPath()));
@@ -37,6 +29,9 @@ public class Minigame extends Dimension {
 
     public static Minigame get(String name) throws IOException {
         return instances.get(name);
+    }
+    public static Map<String, Minigame> getAll() throws IOException {
+        return instances;
     }
 
     @Override
@@ -213,7 +208,57 @@ public class Minigame extends Dimension {
         }
     }
 
-    public void loadConfig(List<ConfigurationOptions> config) {
+    
+    public Location getSpawnLocation() {
 
+        if(this.location != null) return this.location;
+        
+        FileConfiguration config = Plugin.plugin.getConfig();
+
+        ConfigurationSection section = config.getConfigurationSection("minigames." + this.name);
+
+        if (section == null) {
+            section = config.getConfigurationSection("minigames");
+            section.set( this.name + ".spawn.X", 0);
+            section.set( this.name + ".spawn.Y", 60);
+            section.set( this.name + ".spawn.Z", 0);
+            section.set( this.name + ".spawn.yaw", 0);
+            section.set( this.name + ".spawn.pitch", 0);
+
+            Plugin.plugin.saveConfig();
+
+            return new Location(this.dim, 0, 60, 0, 0, 0);
+        }
+
+        ConfigurationSection spawn = section.getConfigurationSection("spawn");
+
+        if( spawn == null ) {
+            section.set( this.name + ".spawn.X", 0);
+            section.set( this.name + ".spawn.Y", 60);
+            section.set( this.name + ".spawn.Z", 0);
+            section.set( this.name + ".spawn.yaw", 0);
+            section.set( this.name + ".spawn.pitch", 0);
+
+            Plugin.plugin.saveConfig();
+
+            return new Location(this.dim, 0, 60, 0, 0, 0);
+        }
+
+        this.location = new Location(this.dim, (int) spawn.get("X"), (int) spawn.get("Y"), (int) spawn.get("Z"), (int) spawn.get("yaw"), (int) spawn.get("pitch"));
+
+        return location;
+    }
+
+    public void setSpawnLocation(Location location) {
+        
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.X", location.getX());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.Y", location.getY());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.Z", location.getZ());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.yaw", location.getYaw());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.pitch", location.getPitch());
+
+        Plugin.plugin.saveConfig();
+
+        this.location = location;
     }
 }

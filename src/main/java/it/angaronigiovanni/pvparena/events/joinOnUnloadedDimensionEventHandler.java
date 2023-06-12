@@ -1,7 +1,5 @@
 package it.angaronigiovanni.pvparena.events;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.configuration.ConfigurationSection;

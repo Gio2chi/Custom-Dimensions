@@ -2,7 +2,9 @@ c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\jav
 c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\Plugin.java
 c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\dimensions\Dimension.java
 c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\commands\DisablePluginCommand.java
-c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\events\onJoin.java
+c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\commands\SetSpawnCommand.java
 c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\dimensions\MinigameType.java
+c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\commands\SpawnCommand.java
 c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\dimensions\Minigame.java
 c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\commands\MinigameCommand.java
+c:\Users\gioan\Desktop\Java\Eclipse_progetti\zPluginPVPArena\1.19.4\src\main\java\it\angaronigiovanni\pvparena\events\joinOnUnloadedDimensionEventHandler.java

@@ -9,6 +9,14 @@ commands:
     usage: /minigame
     description: Sends you to a minigame dimension
   
+  setspawn:
+    usage: /setspawn
+    description: sets the spawn of the current dimension
+
+  spawn: 
+    usage: /spawn
+    description: teleports you to the spawn of the current dimension
+  
   disable:
     usage: /disable plugin
     description: disable the PVPArena plugin

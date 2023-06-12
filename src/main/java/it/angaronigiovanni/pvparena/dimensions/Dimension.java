@@ -1,22 +1,17 @@
 package it.angaronigiovanni.pvparena.dimensions;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
-import org.jnbt.NBTInputStream;
 
 public class Dimension {
     protected String name;
@@ -60,13 +55,7 @@ public class Dimension {
             this.dim = this.worldCreator.createWorld(); // Load the world
         }
     }
-
-    public World getWorld() {
-        if (this.dim != null)
-            return this.dim;
-        throw new Error("World not loaded", null);
-    }
-
+    
     public void unload() throws IOException, FileNotFoundException {
         List<Player> players = this.dim.getPlayers();
         for (Player player : players) {
@@ -81,5 +70,12 @@ public class Dimension {
         }
         this.dim.save();
         Bukkit.unloadWorld(this.dim, true);
+        this.dim = null;
+    }
+
+
+
+    public World getWorld() {
+        return this.dim;
     }
 }
