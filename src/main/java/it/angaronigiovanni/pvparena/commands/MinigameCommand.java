@@ -12,8 +12,6 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -44,49 +42,15 @@ public class MinigameCommand implements TabExecutor {
 			List<String> result = new ArrayList<>();
 
 			result.add("tp");
+			result.add("exit");
 
 			if (!sender.isOp())
 				return result;
 
+			result.add("stop");
+
 			result.add("load");
 			result.add("unload");
-
-			return result;
-		}
-
-		// tab completer for the minigame load command
-		if (args.length == 2 && args[0].equalsIgnoreCase("load")) {
-			File folder = new File("minigames/");
-
-			List<String> dirs = new ArrayList<>();
-
-			for (File dir : folder.listFiles())
-				dirs.add(dir.toString().split(Pattern.quote(File.separator))[1]);
-
-			try {
-				for (String name : Minigame.getAll().keySet()) {
-					if (Minigame.get(name).getWorld() != null)
-						dirs.remove(name);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			return dirs;
-		}
-
-		// tab completer for the minigame unload command
-		if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
-			List<String> result = new ArrayList<>();
-
-			try {
-				for (String name : Minigame.getAll().keySet()) {
-					if (Minigame.get(name).getWorld() != null)
-						result.add(name);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
 			return result;
 		}
@@ -124,6 +88,74 @@ public class MinigameCommand implements TabExecutor {
 			return result;
 		}
 
+		// tab completer for the minigame exit command
+		if (args.length == 2 && args[0].equalsIgnoreCase("exit")) {
+			if (!sender.isOp())
+				return null;
+			
+			List<String> result = new ArrayList<>();
+			return result;
+		}
+
+		// tab completer for the minigame stop command
+		if (args.length == 2 && args[0].equalsIgnoreCase("stop")) {
+			if (!sender.isOp())
+				return null;
+			
+			List<String> result = new ArrayList<>();
+
+			try {
+				for (String name : Minigame.getAll().keySet()) {
+					if (Minigame.get(name).getWorld() != null)
+						result.add(name);
+				}
+			} catch (IOException e) { e.printStackTrace(); }
+			
+			return result;
+		}
+
+		// tab completer for the minigame load command
+		if (args.length == 2 && args[0].equalsIgnoreCase("load")) {
+			if (!sender.isOp())
+				return null;
+
+			File folder = new File("minigames/");
+
+			List<String> dirs = new ArrayList<>();
+
+			for (File dir : folder.listFiles())
+				dirs.add(dir.toString().split(Pattern.quote(File.separator))[1]);
+
+			try {
+				for (String name : Minigame.getAll().keySet()) {
+					if (Minigame.get(name).getWorld() != null)
+						dirs.remove(name);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return dirs;
+		}
+
+		// tab completer for the minigame unload command
+		if (args.length == 2 && args[0].equalsIgnoreCase("unload")) {
+			if (!sender.isOp())
+				return null;
+
+			List<String> result = new ArrayList<>();
+
+			try {
+				for (String name : Minigame.getAll().keySet()) {
+					if (Minigame.get(name).getWorld() != null)
+						result.add(name);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return result;
+		}
 
 		return null;
 	}
@@ -295,7 +327,6 @@ public class MinigameCommand implements TabExecutor {
 
 			// /minigame tp ?[map]
 			if (!player.isOp()) {
-
 				if (args.length == 1) {
 					try {
 						Minigame minigame = randomDimension();

@@ -233,11 +233,11 @@ public class Minigame extends Dimension {
         ConfigurationSection spawn = section.getConfigurationSection("spawn");
 
         if( spawn == null ) {
-            section.set( this.name + ".spawn.X", 0);
-            section.set( this.name + ".spawn.Y", 60);
-            section.set( this.name + ".spawn.Z", 0);
-            section.set( this.name + ".spawn.yaw", 0);
-            section.set( this.name + ".spawn.pitch", 0);
+            section.set( "spawn.X", 0);
+            section.set( "spawn.Y", 60);
+            section.set( "spawn.Z", 0);
+            section.set( "spawn.yaw", 0);
+            section.set( "spawn.pitch", 0);
 
             Plugin.plugin.saveConfig();
 
@@ -251,11 +251,11 @@ public class Minigame extends Dimension {
 
     public void setSpawnLocation(Location location) {
         
-        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.X", location.getX());
-        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.Y", location.getY());
-        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.Z", location.getZ());
-        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.yaw", location.getYaw());
-        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.pitch", location.getPitch());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.X", (int) location.getX());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.Y", (int) location.getY());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.Z", (int) location.getZ());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.yaw", (int) location.getYaw());
+        Plugin.plugin.getConfig().set("minigames." + this.name + ".spawn.pitch", (int) location.getPitch());
 
         Plugin.plugin.saveConfig();
 

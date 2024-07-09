@@ -24,7 +24,8 @@ public class SpawnCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(args != null) {
+        if(args.length > 0) {
+            for(String arg : args) System.out.println(arg);
             sender.sendMessage(errorColor + "Syntax error: try with /spawn");
             return true;
         }
@@ -35,10 +36,19 @@ public class SpawnCommand implements TabExecutor {
 
         Player player = (Player) sender;
         
+        if (!player.isOp()) {
+            sender.sendMessage(errorColor + "An administrator permission is required");
+            return true;
+        }
+
         try {
-            Minigame dim = Minigame.get(player.getWorld().getName());
+            String[] dimName = player.getWorld().getName().split("/");
+            Minigame dim = null;
+            if(dimName.length == 2)
+                dim = Minigame.get(dimName[1]);
+                
             if( dim == null )
-                player.teleport(player.getBedSpawnLocation());
+                player.teleport(player.getWorld().getSpawnLocation());
             else 
                 player.teleport(dim.getSpawnLocation());
 
